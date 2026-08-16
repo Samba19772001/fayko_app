@@ -29,8 +29,6 @@ class FaykoApp extends StatelessWidget {
   }
 }
 
-/// Décide quel écran afficher au démarrage : connexion si personne n'est
-/// authentifié, accueil sinon.
 class AuthGate extends StatelessWidget {
   const AuthGate({super.key});
 
@@ -41,6 +39,7 @@ class AuthGate extends StatelessWidget {
     if (auth.isAuthenticated) {
       return const HomeScreen();
     }
+
     return const LoginScreen();
   }
 }

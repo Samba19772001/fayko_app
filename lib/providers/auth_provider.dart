@@ -20,7 +20,9 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      await _api.post('/auth/demander-code', {'telephone': telephone}, withAuth: false);
+      await _api.post('/auth/demander-code', {
+        'telephone': telephone,
+      }, withAuth: false);
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -32,11 +34,10 @@ class AuthProvider extends ChangeNotifier {
     _isLoading = true;
     notifyListeners();
     try {
-      final data = await _api.post(
-        '/auth/verifier-code',
-        {'telephone': telephone, 'code': code},
-        withAuth: false,
-      );
+      final data = await _api.post('/auth/verifier-code', {
+        'telephone': telephone,
+        'code': code,
+      }, withAuth: false);
       await _api.saveToken(data['token']);
       _user = User.fromJson(data['user']);
     } finally {
