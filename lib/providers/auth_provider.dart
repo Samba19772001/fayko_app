@@ -68,4 +68,27 @@ class AuthProvider extends ChangeNotifier {
     _user = null;
     notifyListeners();
   }
+
+  /// Complète le profil (nom, prénom, CNI) — §3.2. Ne rend pas le compte
+  /// "vérifié" pour autant, ça reste une étape distincte (vérification
+  /// d'identité par un agent, non couverte ici).
+  Future<void> completerProfil({
+    required String nom,
+    required String prenom,
+    required String numeroCni,
+  }) async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      final data = await _api.post('/auth/completer-profil', {
+        'nom': nom,
+        'prenom': prenom,
+        'numero_cni': numeroCni,
+      });
+      _user = User.fromJson(data['user']);
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
 }

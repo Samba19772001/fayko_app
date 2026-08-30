@@ -4,6 +4,9 @@ import '../providers/auth_provider.dart';
 import '../services/api_service.dart';
 import '../models/contrat.dart';
 import 'new_contract_screen.dart';
+import 'contract_detail_screen.dart';
+import 'profile_screen.dart';
+import 'solvency_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -168,6 +171,11 @@ class _ContractsListViewState extends State<_ContractsListView> {
         final c = _contrats![i];
         final autrePartie = _role == 'preteur' ? c.emprunteurNom : c.preteurNom;
         return ListTile(
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => ContractDetailScreen(contratId: c.id),
+            ),
+          ),
           contentPadding: const EdgeInsets.symmetric(vertical: 4),
           leading: CircleAvatar(
             backgroundColor: const Color(0xFF1E3A5F),
@@ -288,9 +296,18 @@ class _BottomNav extends StatelessWidget {
           ).push(MaterialPageRoute(builder: (_) => const NewContractScreen()));
           return;
         }
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(const SnackBar(content: Text('Écran à venir')));
+        if (index == 2) {
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const SolvencyScreen()));
+          return;
+        }
+        if (index == 3) {
+          Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const ProfileScreen()));
+          return;
+        }
       },
       items: const [
         BottomNavigationBarItem(

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../services/api_service.dart';
+import 'contract_detail_screen.dart';
 
 /// Formulaire de création de contrat (§3.3). Envoie la demande au
 /// prêteur connecté vers l'autre partie identifiée par son numéro.
@@ -93,9 +94,9 @@ class _NewContractScreenState extends State<NewContractScreen> {
       });
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Demande envoyée. En attente de signature.'),
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (_) => ContractDetailScreen(contratId: data['id']),
         ),
       );
       Navigator.of(context).pop(data);
