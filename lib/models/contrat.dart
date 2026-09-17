@@ -1,3 +1,5 @@
+import 'remboursement.dart';
+
 /// Représente un contrat tel que renvoyé par l'API (§5.3 côté Laravel).
 class Contrat {
   final int id;
@@ -10,14 +12,15 @@ class Contrat {
   final double? tauxInteret;
   final String? garanties;
   final String modeRemboursement;
-  final String? statut; // null = en attente de signature
+  final String? statut;
   final bool fraisPayes;
   final String? pdfUrl;
   final String preteurNom;
   final String preteurTelephone;
   final String emprunteurNom;
   final String emprunteurTelephone;
-  final List<int> signataireIds; // ids des users ayant déjà signé
+  final List<int> signataireIds;
+  final List<Remboursement> remboursements;
 
   Contrat({
     required this.id,
@@ -38,6 +41,7 @@ class Contrat {
     required this.emprunteurNom,
     required this.emprunteurTelephone,
     required this.signataireIds,
+    required this.remboursements,
   });
 
   factory Contrat.fromJson(Map<String, dynamic> json) {
@@ -49,6 +53,7 @@ class Contrat {
     }
 
     final signatures = (json['signatures'] as List?) ?? [];
+    final remboursementsJson = (json['remboursements'] as List?) ?? [];
 
     return Contrat(
       id: json['id'],
@@ -69,11 +74,17 @@ class Contrat {
       emprunteurNom: nomOuTelephone(json['emprunteur']),
       emprunteurTelephone: json['emprunteur']['telephone'],
       signataireIds: signatures.map<int>((s) => s['user_id'] as int).toList(),
+      remboursements: remboursementsJson.map((r) => Remboursement.fromJson(r)).toList(),
     );
   }
 
   bool aSignePar(int userId) => signataireIds.contains(userId);
   bool get lesDeuxOntSigne => signataireIds.length == 2;
+  bool get estConclu => statut != null && fraisPayes;
+
+  double get totalRembourseConfirme => remboursements
+      .where((r) => r.statutConfirmation == 'confirme')
+      .fold(0.0, (total, r) => total + r.montant);
 
   String get statutAffiche {
     switch (statut) {

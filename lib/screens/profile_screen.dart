@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import 'complete_profile_screen.dart';
+import 'identity_verification_screen.dart';
 
 /// Écran de profil : informations de l'utilisateur, menu vers les
 /// réglages, et déconnexion.
@@ -136,8 +137,8 @@ class ProfileScreen extends StatelessWidget {
                 _menuItem(
                   context,
                   label: "Vérification d'identité (CNI)",
-                  onTap: () => ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Écran à venir')),
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const IdentityVerificationScreen()),
                   ),
                 ),
                 _menuItem(

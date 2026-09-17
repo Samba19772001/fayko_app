@@ -16,6 +16,10 @@ class ApiService {
   final _storage = const FlutterSecureStorage();
 
   Future<String?> _getToken() => _storage.read(key: 'auth_token');
+  /// Exposé temporairement pour construire des requêtes multipart
+  /// (upload de fichiers) en dehors de get()/post(). À terme, un vrai
+  /// helper d'upload centralisé serait préférable.
+  Future<String?> debugToken() => _getToken();
 
   Future<void> saveToken(String token) =>
       _storage.write(key: 'auth_token', value: token);

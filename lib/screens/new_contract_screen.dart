@@ -81,13 +81,22 @@ class _NewContractScreenState extends State<NewContractScreen> {
     });
 
     try {
+      double? tauxInteret;
+      if (_tauxController.text.trim().isNotEmpty) {
+        final texteNettoye = _tauxController.text.trim().replaceAll('%', '').trim();
+        tauxInteret = double.tryParse(texteNettoye);
+        if (tauxInteret == null) {
+          setState(() => _erreur = "Taux d'intérêt invalide (chiffres uniquement, ex. 2 ou 2.5).");
+          return;
+        }
+      }
+
       final data = await _api.post('/contrats', {
         'telephone_autre_partie': _telephoneController.text.trim(),
         'montant': double.parse(_montantController.text.trim()),
         'date_remise_fonds': _dateRemise!.toIso8601String().split('T').first,
         'date_echeance': _dateEcheance!.toIso8601String().split('T').first,
-        if (_tauxController.text.trim().isNotEmpty)
-          'taux_interet': double.parse(_tauxController.text.trim()),
+        if (tauxInteret != null) 'taux_interet': tauxInteret,
         if (_garantiesController.text.trim().isNotEmpty)
           'garanties': _garantiesController.text.trim(),
         'mode_remboursement': _modeRemboursement,
@@ -168,13 +177,11 @@ class _NewContractScreenState extends State<NewContractScreen> {
                 ],
               ),
               const SizedBox(height: 18),
-              _label('Taux d\'intérêt (optionnel)'),
+              _label('Taux d\'intérêt en % (optionnel)'),
               TextFormField(
                 controller: _tauxController,
-                keyboardType: const TextInputType.numberWithOptions(
-                  decimal: true,
-                ),
-                decoration: _decoration('0'),
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                decoration: _decoration('Ex. 2 (ne pas taper le symbole %)'),
               ),
               const SizedBox(height: 18),
               _label('Garanties (optionnel)'),
@@ -189,7 +196,6 @@ class _NewContractScreenState extends State<NewContractScreen> {
               _label('Mode de remboursement'),
               const SizedBox(height: 4),
               _radioMode('mobile_money', 'Mobile money'),
-              _radioMode('especes', 'Espèces'),
               _radioMode('virement', 'Virement bancaire'),
               if (_erreur != null) ...[
                 const SizedBox(height: 16),

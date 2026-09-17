@@ -26,6 +26,7 @@ class User {
   }
 
   bool get estVerifie => statutVerification == 'verifie';
+  bool get estEnAttente => statutVerification == 'en_attente';
 
   String get nomComplet {
     if (nom == null && prenom == null) return telephone;
