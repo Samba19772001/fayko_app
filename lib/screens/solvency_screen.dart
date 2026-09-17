@@ -28,7 +28,6 @@ class _SolvencyScreenState extends State<SolvencyScreen> {
       backgroundColor: const Color(0xFFF5F7F7),
       appBar: AppBar(
         backgroundColor: _indigo,
-        automaticallyImplyLeading: false,
         title: const Text('Solvabilité'),
       ),
       body: Padding(
