@@ -478,6 +478,20 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
     }
   }
 
+  Future<void> _retirerContestation(int id) async {
+    setState(() => _actionRemboursementEnCours = true);
+    try {
+      await _api.post('/remboursements/$id/retirer-contestation', {});
+      await _charger();
+    } on ApiException catch (e) {
+      _afficherErreur(e.message);
+    } catch (_) {
+      _afficherErreur("Impossible de contacter le serveur.");
+    } finally {
+      if (mounted) setState(() => _actionRemboursementEnCours = false);
+    }
+  }
+
   // ---------- PDF ----------
 
   Future<void> _ouvrirPdf(String url) async {
@@ -625,6 +639,11 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
 
     final peutAgir = userId != null && userId != r.declarePar && r.statutConfirmation == 'en_attente';
 
+    // Seule la partie qui n'a PAS déclaré peut avoir contesté — donc si le
+    // statut est "conteste" et que l'utilisateur courant n'est pas le
+    // déclarant, c'est forcément lui l'auteur de la contestation.
+    final peutRetirerContestation = userId != null && userId != r.declarePar && r.statutConfirmation == 'conteste';
+
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(14),
@@ -680,6 +699,18 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
                   ),
                 ),
               ],
+            ),
+          ],
+          if (peutRetirerContestation) ...[
+            const SizedBox(height: 10),
+            OutlinedButton(
+              onPressed: _actionRemboursementEnCours ? null : () => _retirerContestation(r.id),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: _indigo,
+                side: const BorderSide(color: _indigo),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+              ),
+              child: const Text('Retirer ma contestation', style: TextStyle(fontSize: 12.5)),
             ),
           ],
         ],
